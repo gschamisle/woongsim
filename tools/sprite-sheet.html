@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><title>스프라이트 시트 확인</title>
+<style>
+body{background:#1d3b36;color:#fff;font-family:sans-serif;margin:12px}
+.f{display:inline-block;margin:6px;text-align:center;font-size:11px;vertical-align:bottom}
+canvas{image-rendering:pixelated;background:#5cb85a;display:block;margin:0 auto 2px}
+#dl{margin:8px 0}
+</style></head><body>
+<h3>웅심옹심 스프라이트 (배율 x6) — 교체용 이름 목록</h3>
+<p>assets/sprites.json 에 같은 이름으로 [x, y, w, h, 원점x, 원점y]를 적고 PNG 시트를 넣으면 게임이 이 프레임을 덮어씁니다.</p>
+<button id="dl">현재 스프라이트를 PNG 시트 + sprites.json으로 내보내기</button>
+<div id="out"></div>
+<script src="../js/util.js"></script>
+<script src="../js/sprites.js"></script>
+<script>
+SPR.build();
+const out = document.getElementById('out');
+for (const [name, fr] of Object.entries(SPR.frames)) {
+  if (name.endsWith('_ghost') || name.endsWith('_flash')) continue;
+  const d = document.createElement('div'); d.className = 'f';
+  const c = document.createElement('canvas'); c.width = fr.c.width * 6; c.height = fr.c.height * 6;
+  const x = c.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(fr.c, 0, 0, c.width, c.height);
+  x.fillStyle = 'rgba(255,0,0,.8)'; x.fillRect(fr.ox * 6 - 2, fr.oy * 6 - 2, 4, 4);
+  d.appendChild(c); d.appendChild(document.createTextNode(name)); out.appendChild(d);
+}
+document.getElementById('dl').onclick = () => {
+  const names = Object.keys(SPR.frames).filter(n => !n.endsWith('_ghost') && !n.endsWith('_flash'));
+  let x = 0, y = 0, rowH = 0; const W = 512, frames = {};
+  for (const n of names) { const f = SPR.frames[n]; if (x + f.c.width > W) { x = 0; y += rowH; rowH = 0; } frames[n] = [x, y, f.c.width, f.c.height, f.ox, f.oy]; x += f.c.width; rowH = Math.max(rowH, f.c.height); }
+  const sheet = document.createElement('canvas'); sheet.width = W; sheet.height = y + rowH;
+  const sx = sheet.getContext('2d'); for (const n of names) { const [a, b] = frames[n]; sx.drawImage(SPR.frames[n].c, a, b); }
+  const a1 = document.createElement('a'); a1.href = sheet.toDataURL(); a1.download = 'sprites.png'; a1.click();
+  const a2 = document.createElement('a'); a2.href = URL.createObjectURL(new Blob([JSON.stringify({ sheet: 'sprites.png', frames }, null, 1)], { type: 'application/json' })); a2.download = 'sprites.json'; a2.click();
+};
+</script></body></html>

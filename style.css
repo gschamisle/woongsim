@@ -1,0 +1,66 @@
+@font-face { font-family: 'Galmuri11'; src: url('fonts/Galmuri11.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'Galmuri11B'; src: url('fonts/Galmuri11-Bold.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'Galmuri9'; src: url('fonts/Galmuri9.woff2') format('woff2'); font-display: block; }
+
+html, body {
+  margin: 0; padding: 0; height: 100%; overflow: hidden;
+  background: #0b1a17;
+  touch-action: none; user-select: none; -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none;
+  overscroll-behavior: none;
+  font-family: 'Galmuri11', sans-serif;
+}
+#wrap { position: absolute; left: 0; top: 0; }
+#wrap canvas { position: absolute; left: 0; top: 0; }
+#game { image-rendering: pixelated; image-rendering: crisp-edges; }
+#ui { pointer-events: none; }
+
+#touch { display: none; position: fixed; inset: 0; pointer-events: none; z-index: 5; }
+body.touch #touch { display: block; }
+#stick {
+  position: absolute; left: calc(22px + env(safe-area-inset-left)); bottom: calc(22px + env(safe-area-inset-bottom));
+  width: 132px; height: 132px; border-radius: 50%; z-index: 2;
+  background: rgba(0, 48, 43, .45); border: 3px solid rgba(253, 184, 19, .7);
+  pointer-events: auto; box-sizing: border-box;
+}
+#knob {
+  position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%;
+  background: rgba(221, 88, 40, .9); border: 3px solid #141414; box-sizing: border-box;
+}
+#btns { position: absolute; right: calc(18px + env(safe-area-inset-right)); bottom: calc(20px + env(safe-area-inset-bottom)); width: 190px; height: 150px; pointer-events: none; }
+#btns button {
+  position: absolute; pointer-events: auto; border-radius: 50%; border: 3px solid #141414;
+  color: #fff; font-family: 'Galmuri11B', 'Galmuri11', sans-serif; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; line-height: 1.1; padding: 0; touch-action: none;
+}
+#btns button b { font-size: 18px; } #btns button small { font-size: 10px; opacity: .8; }
+#bPass { left: 0; bottom: 0; width: 84px; height: 84px; background: #006058; }
+#bShoot { right: 0; top: 0; width: 98px; height: 98px; background: #DD5828; }
+#btns button.on { filter: brightness(1.35); transform: scale(.95); }
+#bPause {
+  position: absolute; right: calc(10px + env(safe-area-inset-right)); top: calc(10px + env(safe-area-inset-top));
+  width: 44px; height: 44px; border-radius: 8px; pointer-events: auto;
+  background: rgba(0, 48, 43, .7); color: #FDB813; border: 2px solid #FDB813; font-size: 16px;
+}
+/* 가로 모바일: 패드가 경기장을 덮으므로 반투명 */
+@media (orientation: landscape) {
+  body.touch #btns button { opacity: .72; }
+  body.touch #stick { opacity: .8; }
+}
+
+/* 플레이 중에는 왼쪽 화면 전체가 이동 패드 영역 */
+#stickZone { position: absolute; left: 0; top: 18%; width: 50%; bottom: 0; pointer-events: none; }
+body.touch.playing #stickZone { pointer-events: auto; }
+body.touch:not(.playing) #stick, body.touch:not(.playing) #btns { opacity: .35; }
+#stick.float { transition: none; }
+/* 가로로 긴 휴대폰(약 2:1 이상): 경기 화면 양옆 빈 공간에 조작 버튼을 세로로 배치 */
+@media (orientation: landscape) and (min-aspect-ratio: 19/10) {
+  body.touch #stick { left: calc(10px + env(safe-area-inset-left)); width: 118px; height: 118px; bottom: calc(18px + env(safe-area-inset-bottom)); }
+  body.touch #knob { width: 48px; height: 48px; margin: -24px 0 0 -24px; }
+  body.touch #btns { right: calc(10px + env(safe-area-inset-right)); width: 104px; height: 206px; bottom: calc(14px + env(safe-area-inset-bottom)); }
+  body.touch #bShoot { right: 3px; top: 0; }
+  body.touch #bPass { left: auto; right: 10px; bottom: 0; }
+  body.touch #btns button { opacity: 1; }
+}
+#rotateHint { display: none; position: absolute; left: 0; right: 0; top: 64%; text-align: center; color: #FDB813; font-size: 14px; opacity: .85; pointer-events: none; }
+@media (orientation: portrait) { body.touch #rotateHint { display: block; } }

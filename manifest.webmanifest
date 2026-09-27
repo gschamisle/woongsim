@@ -1,0 +1,17 @@
+{
+  "name": "웅심옹심: 미라클 원투",
+  "short_name": "웅심옹심",
+  "description": "웅심이와 옹심이의 원투패스 픽셀 축구 아케이드 (비공식 강원FC 팬게임)",
+  "lang": "ko",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#00302B",
+  "theme_color": "#00302B",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
