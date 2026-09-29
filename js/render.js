@@ -394,12 +394,13 @@ const R = {
 
   drawDef(g, d, m) {
     let pose;
-    if (d.state === 'lunge') { SPR.draw(g, 'def_slide', d.x, d.y - 4, d.vx < 0); return; }
+    const kit = m.stage.oppKit === 'stripes' ? 'dst_' : 'def_';
+    if (d.state === 'lunge') { SPR.draw(g, kit + 'slide', d.x, d.y - 4, d.vx < 0); return; }
     if (d.state === 'tell') pose = 'tell';
     else if (d.state === 'down') pose = 'down';
     else if (Math.hypot(d.vx, d.vy) > 10) pose = 'run' + (Math.floor(d.animDist / 7) % 4);
     else pose = Math.floor(m.t * 2 + d.i) % 2 ? 'idle1' : 'idle0';
-    SPR.draw(g, 'def_' + pose, d.x, d.y, d.face < 0);
+    SPR.draw(g, kit + pose, d.x, d.y, d.face < 0);
     if (d.state === 'down') {
       g.fillStyle = C.yellow;
       for (let i = 0; i < 3; i++) { const a = m.t * 6 + i * 2.1; g.fillRect(Math.round(d.x + Math.cos(a) * 6), Math.round(d.y - 24 + Math.sin(a) * 2), 1, 1); }

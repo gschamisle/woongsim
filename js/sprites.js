@@ -173,8 +173,12 @@ const SPR = (() => {
   }
 
   // ── 상대 수비수 / 골키퍼 ─────────────────
-  function defender(pose, gk) {
-    const main = gk ? C.gk : C.opp, dark = gk ? C.gkDark : C.oppDark, light = gk ? '#dcff6a' : '#6f82ea';
+  // kit: 'basic'(파란 기본 유니폼) · 'stripes'(빨강·검정 가로줄무늬, 5스테이지 상대)
+  const SR = '#d8232e', SB = '#262626';
+  function defender(pose, gk, kit = 'basic') {
+    const st = kit === 'stripes' && !gk;
+    const main = gk ? C.gk : st ? SR : C.opp, dark = gk ? C.gkDark : st ? '#a8151f' : C.oppDark, light = gk ? '#dcff6a' : '#6f82ea';
+    const shorts = st ? '#1e1e1e' : '#fff';
     const skin = '#f2c79c', hair = gk ? '#6b3a1c' : '#3a2616';
     const wide = pose === 'slide' || pose === 'dive';
     const c = mk(wide ? 32 : 22, wide ? 18 : 28), p = pen(c.getContext('2d'));
@@ -183,8 +187,10 @@ const SPR = (() => {
       // 오른쪽으로 몸을 던진 자세
       p.ell(X + 5, Y + 7, 4, 4, skin); p.ell(X + 5, Y + 5.5, 4.2, 2.6, hair);
       p.px(X + 7, Y + 7, K);
-      p.rect(X + 9, Y + 5, 9, 6, main); p.rect(X + 11, Y + 5, 1, 6, light); p.rect(X + 14, Y + 5, 1, 6, light);
-      p.rect(X + 18, Y + 5, 3, 6, '#fff');
+      p.rect(X + 9, Y + 5, 9, 6, main);
+      if (st) { for (let x = 0; x < 9; x++) if ((x >> 1) % 2) p.rect(X + 9 + x, Y + 5, 1, 6, SB); }   // 누운 몸이라 줄무늬가 세로로
+      else { p.rect(X + 11, Y + 5, 1, 6, light); p.rect(X + 14, Y + 5, 1, 6, light); }
+      p.rect(X + 18, Y + 5, 3, 6, shorts);
       p.rect(X + 21, Y + 5, 6, 2, dark); p.rect(X + 21, Y + 9, 5, 2, dark);
       p.rect(X + 27, Y + 5, 2, 2, K); p.rect(X + 26, Y + 9, 2, 2, K);
       if (pose === 'dive') { p.rect(X + 1, Y + 1, 3, 3, '#fff'); p.rect(X + 1, Y + 11, 3, 3, '#fff'); }
@@ -207,15 +213,16 @@ const SPR = (() => {
     }
     const by = bob + crouch;
     for (const [lx, ly] of legs) { p.rect(X + lx, Y + ly, 3, 3, dark); p.rect(X + lx, Y + ly + 3, 3, 1, K); }
-    p.rect(X + 6, Y + 17 + by, 9, 4 - Math.min(crouch, 1), '#fff');
+    p.rect(X + 6, Y + 17 + by, 9, 4 - Math.min(crouch, 1), shorts);
     p.rect(X + arms[0][0], Y + arms[0][1] + by, 2, 5, main);
     p.rect(X + arms[1][0], Y + arms[1][1] + by, 2, 5, main);
+    if (st) for (const [ax, ay] of arms) p.rect(X + ax, Y + ay + 2 + by, 2, 1, SB);
     const glove = gk ? '#fff' : skin;
     p.rect(X + arms[0][0], Y + arms[0][1] + 5 + by, 2, gk ? 2 : 1, glove);
     p.rect(X + arms[1][0], Y + arms[1][1] + 5 + by, 2, gk ? 2 : 1, glove);
     p.rect(X + 6, Y + 11 + by, 9, 7, main);
-    p.rect(X + 8, Y + 11 + by, 1, 7, light); p.rect(X + 12, Y + 11 + by, 1, 7, light);
-    p.rect(X + 9, Y + 11 + by, 3, 1, '#fff');
+    if (st) { for (const r of [2, 3, 6]) p.rect(X + 6, Y + 11 + r + by, 9, 1, SB); p.rect(X + 9, Y + 11 + by, 3, 1, SB); }   // 가로줄무늬
+    else { p.rect(X + 8, Y + 11 + by, 1, 7, light); p.rect(X + 12, Y + 11 + by, 1, 7, light); p.rect(X + 9, Y + 11 + by, 3, 1, '#fff'); }
     p.ell(X + 10.5, Y + 7 + by, 4.6, 4.4, skin);
     p.ell(X + 10.2, Y + 5 + by, 4.9, 2.8, hair); p.rect(X + 6, Y + 5 + by, 2, 3, hair);
     if (eyes === 'dizzy') { p.px(X + 11, Y + 7 + by, K); p.px(X + 13, Y + 8 + by, K); }
@@ -252,8 +259,9 @@ const SPR = (() => {
       reg('ong_' + pz, ong(pz), 12, 26);
     }
     const defPoses = ['idle0', 'idle1', 'run0', 'run1', 'run2', 'run3', 'tell', 'down'];
-    for (const pz of defPoses) reg('def_' + pz, defender(pz, false), 11, 27);
+    for (const pz of defPoses) { reg('def_' + pz, defender(pz, false), 11, 27); reg('dst_' + pz, defender(pz, false, 'stripes'), 11, 27); }
     reg('def_slide', defender('slide', false), 16, 13);
+    reg('dst_slide', defender('slide', false, 'stripes'), 16, 13);
     for (const pz of ['gkset', 'idle1', 'leanL', 'leanR', 'run0', 'run2', 'down']) reg('gk_' + pz, defender(pz, true), 11, 27);
     reg('gk_dive', defender('dive', true), 16, 13);
     for (let i = 0; i < 3; i++) reg('ball' + i, ball(i), 4, 4);

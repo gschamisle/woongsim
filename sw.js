@@ -1,5 +1,5 @@
 // 오프라인 실행용 서비스 워커: 처음 접속할 때 게임 파일을 모두 캐시한다.
-const VERSION = 'woongsim-v5';
+const VERSION = 'woongsim-v6';
 const FILES = [
   './', './index.html', './style.css', './manifest.webmanifest',
   './js/util.js', './js/data.js', './js/save.js', './js/sprites.js', './js/audio.js', './js/input.js',

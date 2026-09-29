@@ -113,6 +113,7 @@ const STAGES = [
     story: '가득 찬 하이원아레나, 0:4에서 시작하는 역전 도전! 2019년 6월 23일 포항전 5:4 역전승에서 영감을 받은 창작 스테이지예요.',
     lesson: '골을 넣을 때마다 수비 배치가 바뀌어요. 실패하면 시간이 5초 더 줄어요. 마지막 골키퍼는 가장 까다로워요.',
     comboStar: 14, timeRatio: 0.2, defMul: 1.0, crowd: 1.0, finale: true, extraTime: 30, oppScore: 4,
+    oppKit: 'stripes',   // 상대: 빨강·검정 가로줄무늬 유니폼
     // 득점 수에 따라 순서대로 사용
     layouts: [
       [{ r: 'press', x: 150, dy: -10 }, { r: 'zone', x: 260, dy: 30 }, { r: 'zone', x: 350, dy: -25 }],
