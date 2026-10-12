@@ -94,3 +94,16 @@ const out = path.join(root, 'icons'); fs.mkdirSync(out, { recursive: true });
 const base = compose(64, 2), mask = compose(80, 10);
 const files = { 'icon-192.png': scaleUp(base, 3), 'icon-512.png': scaleUp(base, 8), 'apple-touch-icon.png': scaleUp(base, 3), 'icon-maskable-512.png': scaleUp(mask, 6.4) };
 for (const [n, c] of Object.entries(files)) { fs.writeFileSync(path.join(out, n), png(c)); console.log('icons/' + n, c.width + 'x' + c.height); }
+
+// Windows 바로가기용 .ico (256·64·32 크기 PNG를 담음)
+const icoImgs = [scaleUp(base, 4), base, compose(32, 1)].map(png);
+const head = Buffer.alloc(6 + 16 * icoImgs.length);
+head.writeUInt16LE(0, 0); head.writeUInt16LE(1, 2); head.writeUInt16LE(icoImgs.length, 4);
+let off = head.length;
+[256, 64, 32].forEach((sz, i) => {
+  const e = 6 + i * 16;
+  head[e] = sz === 256 ? 0 : sz; head[e + 1] = sz === 256 ? 0 : sz; head.writeUInt16LE(1, e + 4); head.writeUInt16LE(32, e + 6);
+  head.writeUInt32LE(icoImgs[i].length, e + 8); head.writeUInt32LE(off, e + 12); off += icoImgs[i].length;
+});
+fs.writeFileSync(path.join(out, 'woongsim.ico'), Buffer.concat([head, ...icoImgs]));
+console.log('icons/woongsim.ico 256·64·32');
